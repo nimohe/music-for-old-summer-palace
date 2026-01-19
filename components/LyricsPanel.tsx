@@ -41,7 +41,7 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({ lyrics, currentTime, onSeek }
   };
 
   return (
-    <div className="h-full flex flex-col p-4 md:p-0">
+    <div className="h-full flex flex-col p-4 md:p-0 overflow-hidden">
       {/* Header Info - Fixed at top of lyrics panel */}
       <div className="mb-8 flex-shrink-0">
         <div className="flex items-center space-x-3 mb-2">
@@ -59,7 +59,7 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({ lyrics, currentTime, onSeek }
       <div 
         ref={containerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto custom-scrollbar mask-fade-edges relative px-2"
+        className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar mask-fade-edges relative px-2"
       >
         <div className="py-[30vh] space-y-8">
             {lyrics.map((lyric, index) => (
@@ -67,7 +67,7 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({ lyrics, currentTime, onSeek }
                     key={index}
                     ref={index === activeIndex ? activeLyricRef : null}
                     onClick={() => onSeek?.(lyric.time)}
-                    className={`transition-all duration-700 cursor-pointer ${
+                    className={`transition-all duration-700 cursor-pointer truncate whitespace-nowrap ${
                         index === activeIndex 
                         ? 'text-gray-900 text-2xl font-bold scale-105 origin-left' 
                         : 'text-gray-400 text-lg font-medium hover:text-gray-600'
