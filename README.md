@@ -1,11 +1,37 @@
-<div align="center">
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+# Zenith Music Player - 本地运行指南
 
-  <h1>Built with AI Studio</h2>
+这是一个基于 React + TypeScript + Vite 构建的极简音乐播放器。
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## 操作步骤
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+### 1. 环境准备
+确保你的电脑上已经安装了 [Node.js](https://nodejs.org/) (建议使用 LTS 版本)。
 
-</div>
+### 2. 项目初始化
+1. 创建一个新的文件夹。
+2. 将项目中的所有文件（`index.html`, `App.tsx`, `index.tsx`, `package.json`, `vite.config.ts`, `tsconfig.json` 以及 `components` 文件夹）复制到该文件夹中。
+
+### 3. 安装依赖
+打开终端（Terminal 或 Command Prompt），进入该文件夹，运行以下命令安装必要的插件：
+
+```bash
+npm install
+```
+
+### 4. 启动开发服务器
+运行以下命令启动本地预览：
+
+```bash
+npm run dev
+```
+
+### 5. 访问项目
+启动后，终端会显示一个本地地址（通常是 `http://localhost:5173`）。在浏览器中打开该地址即可看到播放器。
+
+## 主要功能
+- **胶片旋转播放**：点击左侧封面或下方播放按钮，唱片会随之转动。
+- **歌词同步滚动**：右侧歌词根据当前播放进度自动高亮并滚动。
+- **智能滚动控制**：手动滚动歌词后会自动暂停自动滚动，3秒无操作后恢复同步。
+- **交互式进度条**：支持点击和拖拽进度条来调整播放位置。
+- **响应式布局**：完美适配桌面端和移动端。
