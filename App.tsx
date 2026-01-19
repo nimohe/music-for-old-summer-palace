@@ -107,6 +107,10 @@ const App: React.FC = () => {
           <LyricsPanel 
             lyrics={MOCK_SONG.lyrics} 
             currentTime={currentTime} 
+            title={MOCK_SONG.title}
+            artist={MOCK_SONG.artist}
+            album={MOCK_SONG.album}
+            source={MOCK_SONG.source}
             onSeek={handleSeek}
           />
         </div>

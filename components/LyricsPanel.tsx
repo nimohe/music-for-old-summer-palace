@@ -5,10 +5,22 @@ import { LyricLine } from '../types';
 interface LyricsPanelProps {
   lyrics: LyricLine[];
   currentTime: number;
+  title: string;
+  artist: string;
+  album: string;
+  source: string;
   onSeek?: (time: number) => void;
 }
 
-const LyricsPanel: React.FC<LyricsPanelProps> = ({ lyrics, currentTime, onSeek }) => {
+const LyricsPanel: React.FC<LyricsPanelProps> = ({ 
+  lyrics, 
+  currentTime, 
+  title, 
+  artist, 
+  album, 
+  source, 
+  onSeek 
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const activeLyricRef = useRef<HTMLDivElement>(null);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
@@ -42,16 +54,16 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({ lyrics, currentTime, onSeek }
 
   return (
     <div className="h-full flex flex-col p-4 md:p-0 overflow-hidden">
-      {/* Header Info - Fixed at top of lyrics panel */}
+      {/* Header Info - Dynamic data from props */}
       <div className="mb-8 flex-shrink-0">
         <div className="flex items-center space-x-3 mb-2">
-            <h1 className="text-3xl font-bold text-gray-900 truncate">我爱我</h1>
+            <h1 className="text-3xl font-bold text-gray-900 truncate">{title}</h1>
             <span className="flex-shrink-0 px-2 py-0.5 bg-red-50 text-red-500 text-xs font-medium border border-red-200 rounded">本地</span>
         </div>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-gray-500">
-            <p>专辑：<span className="text-blue-600 hover:underline cursor-pointer">我爱我</span></p>
-            <p>歌手：<span className="text-blue-600 hover:underline cursor-pointer">李奕遐</span></p>
-            <p>来源：<span className="text-blue-600 hover:underline cursor-pointer">我喜欢的音乐</span></p>
+            <p>专辑：<span className="text-blue-600 hover:underline cursor-pointer">{album}</span></p>
+            <p>歌手：<span className="text-blue-600 hover:underline cursor-pointer">{artist}</span></p>
+            <p>来源：<span className="text-blue-600 hover:underline cursor-pointer">{source}</span></p>
         </div>
       </div>
 
