@@ -8,6 +8,7 @@ const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(0.7); // Default volume at 70%
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const formatTime = (time: number) => {
@@ -36,6 +37,8 @@ const App: React.FC = () => {
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
+      // Ensure initial volume is set
+      audioRef.current.volume = volume;
     }
   };
 
@@ -58,16 +61,31 @@ const App: React.FC = () => {
     }
   };
 
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
+    }
+  };
+
+  // Keep volume synced if it changes from external sources or effects
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
   return (
-    <div className="min-h-screen w-full flex flex-col bg-white overflow-hidden text-gray-900">
+    <div className="h-screen w-full flex flex-col bg-white overflow-hidden text-gray-900 relative">
       {/* Background decoration elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gray-50 rounded-full blur-3xl -z-10 opacity-50 translate-x-1/2 -translate-y-1/2"></div>
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-50 rounded-full blur-3xl -z-10 opacity-50 -translate-x-1/2 translate-y-1/2"></div>
 
-      <main className="flex-1 flex flex-col md:flex-row items-stretch md:max-w-7xl mx-auto w-full p-4 md:p-12 gap-12">
+      <main className="flex-1 flex flex-col md:flex-row items-stretch w-full overflow-hidden p-4 md:p-12 md:pb-24">
         {/* Left Section: Vinyl */}
-        <div className="flex-1 flex flex-col items-center justify-center">
-          <div onClick={togglePlay} className="cursor-pointer">
+        <div className="flex-1 flex flex-col items-center justify-center overflow-hidden">
+          <div onClick={togglePlay} className="cursor-pointer transform hover:scale-[1.02] transition-transform duration-500">
             <VinylRecord 
               isPlaying={isPlaying} 
               coverUrl={MOCK_SONG.coverUrl} 
@@ -76,7 +94,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Right Section: Lyrics */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative flex flex-col overflow-hidden max-w-2xl mx-auto md:mx-0">
           <LyricsPanel 
             lyrics={MOCK_SONG.lyrics} 
             currentTime={currentTime} 
@@ -86,15 +104,15 @@ const App: React.FC = () => {
       </main>
 
       {/* Persistent Audio Controls at the Bottom */}
-      <footer className="w-full bg-white/80 backdrop-blur-md border-t border-gray-100 p-4 md:px-12 fixed bottom-0 left-0 z-50">
+      <footer className="w-full bg-white/80 backdrop-blur-md border-t border-gray-100 p-4 md:px-12 flex-shrink-0 z-50">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-4">
           
-          {/* Track Info (Mobile mostly) */}
+          {/* Track Info */}
           <div className="hidden md:flex items-center space-x-4 w-64">
              <img src={MOCK_SONG.coverUrl} alt="Cover" className="w-12 h-12 rounded shadow-sm" />
-             <div>
+             <div className="overflow-hidden">
                 <p className="font-semibold text-sm truncate">{MOCK_SONG.title}</p>
-                <p className="text-gray-500 text-xs">{MOCK_SONG.artist}</p>
+                <p className="text-gray-500 text-xs truncate">{MOCK_SONG.artist}</p>
              </div>
           </div>
 
@@ -141,7 +159,7 @@ const App: React.FC = () => {
 
             {/* Progress Bar */}
             <div className="w-full flex items-center space-x-4 px-4">
-                <span className="text-[10px] text-gray-400 font-medium tabular-nums w-8">{formatTime(currentTime)}</span>
+                <span className="text-[10px] text-gray-400 font-medium tabular-nums w-8 text-right">{formatTime(currentTime)}</span>
                 <input 
                   type="range"
                   min="0"
@@ -157,12 +175,33 @@ const App: React.FC = () => {
 
           {/* Volume and Extra Controls */}
           <div className="hidden md:flex items-center justify-end space-x-4 w-64">
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-            </svg>
-            <div className="w-24 h-1 bg-gray-200 rounded-full overflow-hidden relative group cursor-pointer">
-                <div className="absolute top-0 left-0 h-full w-2/3 bg-gray-400 group-hover:bg-blue-500 transition-colors"></div>
-            </div>
+            <button 
+              onClick={() => {
+                const newVolume = volume === 0 ? 0.7 : 0;
+                setVolume(newVolume);
+              }}
+              className="text-gray-400 hover:text-gray-900 transition-colors"
+            >
+              {volume === 0 ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                </svg>
+              )}
+            </button>
+            <input 
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={volume}
+              onChange={handleVolumeChange}
+              className="w-24 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-400 hover:accent-blue-500 transition-all"
+            />
             <button className="text-gray-400 hover:text-gray-900">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
