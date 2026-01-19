@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import VinylRecord from './components/VinylRecord';
 import LyricsPanel from './components/LyricsPanel';
 import { MOCK_SONG } from './constants';
@@ -17,14 +17,27 @@ const App: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Safely trigger playback
+  const safePlay = async () => {
+    if (audioRef.current) {
+      try {
+        await audioRef.current.play();
+      } catch (error: any) {
+        // Ignore AbortError as it's just an interruption
+        if (error.name !== 'AbortError') {
+          console.error("Playback failed:", error);
+        }
+      }
+    }
+  };
+
   const togglePlay = () => {
     if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
+      if (audioRef.current.paused) {
+        safePlay();
       } else {
-        audioRef.current.play();
+        audioRef.current.pause();
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -37,7 +50,6 @@ const App: React.FC = () => {
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
-      // Ensure initial volume is set
       audioRef.current.volume = volume;
     }
   };
@@ -54,10 +66,7 @@ const App: React.FC = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = time;
       setCurrentTime(time);
-      if (!isPlaying) {
-        audioRef.current.play();
-        setIsPlaying(true);
-      }
+      safePlay();
     }
   };
 
@@ -69,7 +78,7 @@ const App: React.FC = () => {
     }
   };
 
-  // Keep volume synced if it changes from external sources or effects
+  // Ensure volume stays in sync
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
@@ -216,6 +225,8 @@ const App: React.FC = () => {
         src={MOCK_SONG.audioUrl}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
         onEnded={() => setIsPlaying(false)}
       />
     </div>
