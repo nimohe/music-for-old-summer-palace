@@ -1,0 +1,43 @@
+name: Build and Deploy to Build Branch
+
+on:
+  push:
+    branches: [ main ] # 监听main分支的推送事件
+    paths-ignore: # 忽略某些文件的变更，避免不必要的构建
+      - 'README.md'
+      - '**.md'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 步骤1：拉取源码
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false # 重要！使用后续指定的token进行推送
+
+      # 步骤2：设置Node.js环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.7.0' # 指定Node.js版本，请与项目保持一致
+          cache: 'npm' # 缓存npm依赖，加速后续构建
+
+      # 步骤3：安装依赖
+      - name: Install dependencies
+        run: npm ci # 使用ci命令替代install，保证依赖版本精确
+
+      # 步骤4：执行构建
+      - name: Build project
+        run: npm run build # 执行package.json中定义的build脚本
+
+      # 步骤5：部署到构建分支
+      - name: Deploy to Build Branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub自动提供的令牌
+          publish_dir: ./dist # 构建产物的目录（React应用通常是build或dist）
+          publish_branch: build # 目标分支名称，例如 'build' 或 'gh-pages'
+          force_orphan: true # 强制清空目标分支历史，只保留最新一次提交
+          keep_files: false # 不保留目标分支的旧文件
