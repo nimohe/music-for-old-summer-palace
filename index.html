@@ -53,26 +53,18 @@
         }
         .marquee-content {
             display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        /* 仅在内容溢出且激活时触发动画 */
+        .marquee-active {
+            animation: marquee-scroll 15s linear infinite;
+            padding-right: 50px;
         }
 
         @media (max-width: 767px) {
-            .marquee-wrapper {
+            .marquee-wrapper.is-overflowing {
                 mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-            }
-            .marquee-content {
-                padding-right: 50px;
-                animation: marquee-scroll 15s linear infinite;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .marquee-content {
-                animation: none;
-                display: block;
-                padding-right: 0;
-            }
-            .marquee-content h1:last-child {
-                display: none;
             }
         }
 

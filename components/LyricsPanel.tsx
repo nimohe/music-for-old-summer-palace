@@ -23,13 +23,31 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const activeLyricRef = useRef<HTMLDivElement>(null);
+  const titleWrapperRef = useRef<HTMLDivElement>(null);
+  const titleContentRef = useRef<HTMLHeadingElement>(null);
+  
   const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const [shouldMarquee, setShouldMarquee] = useState(false);
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const activeIndex = lyrics.findIndex((l, i) => {
     const nextTime = lyrics[i + 1]?.time ?? Infinity;
     return currentTime >= l.time && currentTime < nextTime;
   });
+
+  // 检测标题是否溢出，仅在移动端且溢出时开启跑马灯
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (titleWrapperRef.current && titleContentRef.current) {
+        const isOverflow = titleContentRef.current.offsetWidth > titleWrapperRef.current.offsetWidth;
+        setShouldMarquee(isOverflow && window.innerWidth < 768);
+      }
+    };
+
+    checkOverflow();
+    window.addEventListener('resize', checkOverflow);
+    return () => window.removeEventListener('resize', checkOverflow);
+  }, [title]);
 
   useEffect(() => {
     if (!isUserScrolling && activeLyricRef.current && containerRef.current) {
@@ -55,11 +73,25 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
   return (
     <div className="h-full flex flex-col items-center md:items-start text-center md:text-left overflow-hidden">
       {/* Header Info */}
-      <div className="mb-4 md:mb-8 flex-shrink-0 w-full">
-        <div className="marquee-wrapper mb-2">
-            <div className="marquee-content">
-                <h1 className="text-xl md:text-3xl font-bold text-gray-900 inline-block pr-12 truncate md:max-w-xl" title={title}>{title}</h1>
-                <h1 className="text-xl md:text-3xl font-bold text-gray-900 inline-block pr-12 md:hidden" title={title}>{title}</h1>
+      <div className="mb-4 md:mb-8 flex-shrink-0 w-full px-4 md:px-0">
+        <div 
+          ref={titleWrapperRef}
+          className={`marquee-wrapper mb-2 ${shouldMarquee ? 'is-overflowing' : ''}`}
+        >
+            <div className={`marquee-content ${shouldMarquee ? 'marquee-active' : 'w-full text-center md:text-left'}`}>
+                <h1 
+                  ref={titleContentRef}
+                  className="text-xl md:text-3xl font-bold text-gray-900 inline-block md:max-w-xl" 
+                  title={title}
+                >
+                  {title}
+                </h1>
+                {/* 仅在需要滚动时渲染第二个标题用于无缝循环 */}
+                {shouldMarquee && (
+                  <h1 className="text-xl md:text-3xl font-bold text-gray-900 inline-block">
+                    {title}
+                  </h1>
+                )}
             </div>
         </div>
         <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-4 md:gap-x-6 gap-y-1 text-xs md:text-sm text-gray-500">
@@ -69,7 +101,7 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
         </div>
       </div>
 
-      {/* Lyrics Container - 移动端高度限制为 3 行 (约 100px - 120px) */}
+      {/* Lyrics Container - 移动端高度限制显示 3 行 */}
       <div 
         ref={containerRef}
         onScroll={handleScroll}
@@ -82,7 +114,7 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
                     key={index}
                     ref={index === activeIndex ? activeLyricRef : null}
                     onClick={() => onSeek?.(lyric.time)}
-                    className={`transition-all duration-700 cursor-pointer whitespace-normal py-1 ${
+                    className={`transition-all duration-700 cursor-pointer whitespace-normal py-1 px-4 md:px-0 ${
                         index === activeIndex 
                         ? 'text-gray-900 text-lg md:text-2xl font-bold scale-105' 
                         : 'text-gray-400 text-base md:text-lg font-medium hover:text-gray-600'
