@@ -78,11 +78,11 @@ const App: React.FC = () => {
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-50 rounded-full blur-3xl -z-10 opacity-50 -translate-x-1/2 translate-y-1/2"></div>
 
       {/* Main Content: 移动端胶片在上，歌词在下 */}
-      <main className="flex-1 flex flex-col md:flex-row items-stretch w-full overflow-hidden p-2 md:p-12 md:pb-24">
+      <main className="flex-1 flex flex-col md:flex-row items-stretch w-full overflow-hidden">
         
-        {/* Top/Left Section: Vinyl Record - 移动端优先级最高且居中 */}
-        <div className="flex-[2] md:flex-1 flex flex-col items-center justify-center overflow-hidden">
-          <div onClick={togglePlay} className="cursor-pointer active:scale-95 transition-transform duration-300">
+        {/* Top Section: Vinyl Record - 移动端占据约 2/3 高度 */}
+        <div className="h-[60%] md:h-auto md:flex-1 flex flex-col items-center justify-center overflow-hidden p-4 md:p-12">
+          <div onClick={togglePlay} className="cursor-pointer active:scale-95 transition-transform duration-300 w-full flex justify-center">
             <VinylRecord 
               isPlaying={isPlaying} 
               coverUrl={MOCK_SONG.coverUrl} 
@@ -90,8 +90,8 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Middle/Right Section: Lyrics Panel - 移动端只显示三行 */}
-        <div className="flex-1 flex flex-col justify-center overflow-hidden max-w-2xl mx-auto md:mx-0 px-4 md:px-0 mt-2 md:mt-0">
+        {/* Bottom Section: Lyrics Panel - 移动端占据剩余空间，且内部居中 */}
+        <div className="flex-1 md:flex-1 flex flex-col justify-center overflow-hidden w-full max-w-2xl mx-auto md:mx-0 px-6 md:px-0">
           <LyricsPanel 
             lyrics={MOCK_SONG.lyrics} 
             currentTime={currentTime} 
@@ -118,14 +118,14 @@ const App: React.FC = () => {
 
           <div className="flex-1 flex flex-col items-center w-full max-w-2xl mx-auto">
             {/* Playback Buttons */}
-            <div className="flex items-center space-x-6 md:space-x-12 mb-1">
+            <div className="flex items-center space-x-8 md:space-x-12 mb-1">
                 <button className="text-gray-300 hover:text-gray-900 transition-colors">
                   <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                   </svg>
                 </button>
                 <button className="text-gray-400 hover:text-gray-900 active:scale-90 transition-transform">
-                  <svg className="w-5 h-5 md:w-7 md:h-7" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-6 h-6 md:w-7 md:h-7" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M8.445 14.832A1 1 0 0010 14V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
                     <path d="M16.445 14.832A1 1 0 0018 14V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
                   </svg>
@@ -145,7 +145,7 @@ const App: React.FC = () => {
                   )}
                 </button>
                 <button className="text-gray-400 hover:text-gray-900 active:scale-90 transition-transform">
-                  <svg className="w-5 h-5 md:w-7 md:h-7" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-6 h-6 md:w-7 md:h-7" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4z" />
                     <path d="M12.555 5.168A1 1 0 0011 6v8a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4z" />
                   </svg>
@@ -154,21 +154,21 @@ const App: React.FC = () => {
                   onClick={() => setShowMobileVolume(!showMobileVolume)}
                   className={`md:hidden p-1.5 rounded-full ${showMobileVolume ? 'bg-gray-100 text-gray-900' : 'text-gray-400'}`}
                 >
-                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                    </svg>
                 </button>
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full flex items-center space-x-2 md:space-x-4 px-2">
-                <span className="text-[8px] md:text-[10px] text-gray-400 font-medium tabular-nums w-6 md:w-8 text-right">{formatTime(currentTime)}</span>
+            <div className="w-full flex items-center space-x-3 md:space-x-4 px-4">
+                <span className="text-[10px] text-gray-400 font-medium tabular-nums w-8 text-right">{formatTime(currentTime)}</span>
                 <input 
                   type="range" min="0" max={duration || 0} step="0.1" value={currentTime}
                   onChange={handleProgressChange}
-                  className="flex-1 h-1 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-gray-900"
+                  className="flex-1 h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-gray-900"
                 />
-                <span className="text-[8px] md:text-[10px] text-gray-400 font-medium tabular-nums w-6 md:w-8">{formatTime(duration)}</span>
+                <span className="text-[10px] text-gray-400 font-medium tabular-nums w-8">{formatTime(duration)}</span>
             </div>
 
             {/* Mobile Volume (Overlay style) */}

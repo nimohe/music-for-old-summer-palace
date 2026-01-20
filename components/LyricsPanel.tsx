@@ -37,7 +37,6 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
       const itemTop = activeLyricRef.current.offsetTop;
       const itemHeight = activeLyricRef.current.offsetHeight;
       
-      // 移动端由于高度固定为 3 行，我们将当前行始终置中
       containerRef.current.scrollTo({
         top: itemTop - containerHeight / 2 + itemHeight / 2,
         behavior: 'smooth'
@@ -54,40 +53,39 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col p-2 md:p-0 overflow-hidden">
-      {/* Header Info - 移动端精简字号 */}
-      <div className="mb-3 md:mb-8 flex-shrink-0">
-        <div className="marquee-wrapper mb-1 md:mb-2">
+    <div className="h-full flex flex-col items-center md:items-start text-center md:text-left overflow-hidden">
+      {/* Header Info */}
+      <div className="mb-4 md:mb-8 flex-shrink-0 w-full">
+        <div className="marquee-wrapper mb-2">
             <div className="marquee-content">
-                <h1 className="text-lg md:text-3xl font-bold text-gray-900 inline-block pr-12 truncate md:max-w-xl" title={title}>{title}</h1>
-                <h1 className="text-lg md:text-3xl font-bold text-gray-900 inline-block pr-12 md:hidden" title={title}>{title}</h1>
+                <h1 className="text-xl md:text-3xl font-bold text-gray-900 inline-block pr-12 truncate md:max-w-xl" title={title}>{title}</h1>
+                <h1 className="text-xl md:text-3xl font-bold text-gray-900 inline-block pr-12 md:hidden" title={title}>{title}</h1>
             </div>
         </div>
-        <div className="flex flex-wrap items-center gap-x-3 md:gap-x-6 gap-y-0.5 text-[10px] md:text-sm text-gray-500">
+        <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-4 md:gap-x-6 gap-y-1 text-xs md:text-sm text-gray-500">
             <p>专辑：<span className="text-blue-500">{album}</span></p>
             <p>歌手：<span className="text-blue-500">{artist}</span></p>
             <p className="hidden md:block text-gray-400">来源：<span>{source}</span></p>
         </div>
       </div>
 
-      {/* Lyrics Container - 移动端固定高度以显示约 3 行 */}
+      {/* Lyrics Container - 移动端高度限制为 3 行 (约 100px - 120px) */}
       <div 
         ref={containerRef}
         onScroll={handleScroll}
-        className="flex-1 md:flex-initial h-24 md:h-auto overflow-y-auto overflow-x-hidden custom-scrollbar mask-fade-edges relative px-1"
+        className="w-full flex-1 md:flex-initial h-28 md:h-auto overflow-y-auto overflow-x-hidden custom-scrollbar mask-fade-edges relative px-2"
       >
-        {/* PC 端 py-[25vh]，移动端 py-10 确保初始和结束位置平衡 */}
-        <div className="py-8 md:py-[25vh] space-y-3 md:space-y-8">
+        <div className="py-12 md:py-[25vh] space-y-4 md:space-y-8">
             {lyrics.length > 0 ? (
               lyrics.map((lyric, index) => (
                 <div 
                     key={index}
                     ref={index === activeIndex ? activeLyricRef : null}
                     onClick={() => onSeek?.(lyric.time)}
-                    className={`transition-all duration-700 cursor-pointer whitespace-normal py-0.5 text-center md:text-left ${
+                    className={`transition-all duration-700 cursor-pointer whitespace-normal py-1 ${
                         index === activeIndex 
-                        ? 'text-gray-900 text-base md:text-2xl font-bold scale-105 origin-center md:origin-left' 
-                        : 'text-gray-400 text-sm md:text-lg font-medium hover:text-gray-600'
+                        ? 'text-gray-900 text-lg md:text-2xl font-bold scale-105' 
+                        : 'text-gray-400 text-base md:text-lg font-medium hover:text-gray-600'
                     }`}
                 >
                     {lyric.text}
