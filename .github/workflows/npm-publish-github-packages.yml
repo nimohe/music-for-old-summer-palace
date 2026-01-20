@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # 指定Node.js版本，请与项目保持一致
+          node-version: '24.0.2' # 指定Node.js版本，请与项目保持一致
           cache: 'npm' # 缓存npm依赖，加速后续构建
 
       # 步骤3：安装依赖
