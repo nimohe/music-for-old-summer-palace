@@ -20,8 +20,8 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
         </div>
       </div>
 
-      {/* Main Vinyl Container - 移动端 90vw 宽度比例 */}
-      <div className={`relative w-[88vw] h-[88vw] md:w-96 md:h-96 max-w-full rounded-full bg-zinc-900 shadow-2xl flex items-center justify-center vinyl-grooves ${isPlaying ? 'animate-[spin_20s_linear_infinite]' : ''}`}>
+      {/* Main Vinyl Container - 移动端 85vw 宽度比例 */}
+      <div className={`relative w-[85vw] h-[85vw] md:w-96 md:h-96 max-w-full rounded-full bg-zinc-900 shadow-2xl flex items-center justify-center vinyl-grooves ${isPlaying ? 'animate-[spin_20s_linear_infinite]' : ''}`}>
         {/* Album Cover Circle */}
         <div className="w-1/2 h-1/2 rounded-full overflow-hidden border-4 md:border-8 border-zinc-800 shadow-inner relative z-10">
           <img 
