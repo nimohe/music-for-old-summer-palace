@@ -29,10 +29,6 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
             alt="Album Cover" 
             className="w-full h-full object-cover"
           />
-          {/* Title on Label */}
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-8">
-             <span className="text-[10px] text-white/40 font-bold tracking-widest uppercase">我爱我</span>
-          </div>
           {/* Label texture overlay */}
           <div className="absolute inset-0 bg-black/10 mix-blend-overlay"></div>
         </div>
