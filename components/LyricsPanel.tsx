@@ -71,9 +71,9 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col items-center md:items-start text-center md:text-left overflow-hidden">
-      {/* Header Info */}
-      <div className="mb-4 md:mb-8 flex-shrink-0 w-full px-4 md:px-0">
+    <div className="h-full flex flex-col items-center md:items-start text-center md:text-left overflow-hidden md:pt-24 lg:pt-32">
+      {/* Header Info - PC端通过父容器 pt 增加顶部间距 */}
+      <div className="mb-4 md:mb-12 flex-shrink-0 w-full px-4 md:px-0">
         <div 
           ref={titleWrapperRef}
           className={`marquee-wrapper mb-2 ${shouldMarquee ? 'is-overflowing' : ''}`}
@@ -81,33 +81,33 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
             <div className={`marquee-content ${shouldMarquee ? 'marquee-active' : 'w-full text-center md:text-left'}`}>
                 <h1 
                   ref={titleContentRef}
-                  className="text-xl md:text-3xl font-bold text-gray-900 inline-block md:max-w-xl" 
+                  className="text-xl md:text-4xl lg:text-5xl font-bold text-gray-900 inline-block md:max-w-2xl" 
                   title={title}
                 >
                   {title}
                 </h1>
                 {/* 仅在需要滚动时渲染第二个标题用于无缝循环 */}
                 {shouldMarquee && (
-                  <h1 className="text-xl md:text-3xl font-bold text-gray-900 inline-block">
+                  <h1 className="text-xl md:text-4xl lg:text-5xl font-bold text-gray-900 inline-block">
                     {title}
                   </h1>
                 )}
             </div>
         </div>
-        <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-4 md:gap-x-6 gap-y-1 text-xs md:text-sm text-gray-500">
-            <p>专辑：<span className="text-blue-500">{album}</span></p>
-            <p>歌手：<span className="text-blue-500">{artist}</span></p>
+        <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-4 md:gap-x-8 gap-y-1 text-xs md:text-base text-gray-500">
+            <p>专辑：<span className="text-blue-500 font-medium">{album}</span></p>
+            <p>歌手：<span className="text-blue-500 font-medium">{artist}</span></p>
             <p className="hidden md:block text-gray-400">来源：<span>{source}</span></p>
         </div>
       </div>
 
-      {/* Lyrics Container - 移动端高度限制显示 3 行 */}
+      {/* Lyrics Container - 调整 PC 端高度和宽度限制，使其更紧凑 */}
       <div 
         ref={containerRef}
         onScroll={handleScroll}
-        className="w-full flex-1 md:flex-initial h-28 md:h-auto overflow-y-auto overflow-x-hidden custom-scrollbar mask-fade-edges relative px-2"
+        className="w-full flex-1 md:max-w-xl md:h-[50dvh] overflow-y-auto overflow-x-hidden custom-scrollbar mask-fade-edges relative px-2"
       >
-        <div className="py-12 md:py-[25vh] space-y-4 md:space-y-8">
+        <div className="py-12 md:py-20 lg:py-24 space-y-4 md:space-y-10">
             {lyrics.length > 0 ? (
               lyrics.map((lyric, index) => (
                 <div 
@@ -116,8 +116,8 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
                     onClick={() => onSeek?.(lyric.time)}
                     className={`transition-all duration-700 cursor-pointer whitespace-normal py-1 px-4 md:px-0 ${
                         index === activeIndex 
-                        ? 'text-gray-900 text-lg md:text-2xl font-bold scale-105' 
-                        : 'text-gray-400 text-base md:text-lg font-medium hover:text-gray-600'
+                        ? 'text-gray-900 text-lg md:text-3xl font-bold scale-105' 
+                        : 'text-gray-400 text-base md:text-xl font-medium hover:text-gray-700'
                     }`}
                 >
                     {lyric.text}
