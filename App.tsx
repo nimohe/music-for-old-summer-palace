@@ -10,49 +10,44 @@ const App: React.FC = () => {
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [showMobileVolume, setShowMobileVolume] = useState(false);
-  const [dominantColor, setDominantColor] = useState('rgb(13, 17, 23)'); // 默认更加深邃的背景色
+  const [dominantColor, setDominantColor] = useState('rgb(13, 17, 23)'); 
   const [isDarkTextNeeded, setIsDarkTextNeeded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // 提取封面主色调的高级逻辑
+  // 增强的主色提取逻辑
   useEffect(() => {
-    const img = new Image();
-    img.crossOrigin = "anonymous"; 
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+    const extractColor = () => {
+      const img = new Image();
+      img.crossOrigin = "anonymous"; 
+      img.src = MOCK_SONG.coverUrl;
       
-      // 使用 50x50 采样提高色彩准确度，避免极端噪点
-      const sampleSize = 50;
-      canvas.width = sampleSize;
-      canvas.height = sampleSize;
-      ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
-      
-      const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize).data;
-      let r = 0, g = 0, b = 0;
-      
-      for (let i = 0; i < imageData.length; i += 4) {
-        r += imageData[i];
-        g += imageData[i+1];
-        b += imageData[i+2];
-      }
-      
-      const pixelCount = imageData.length / 4;
-      const avgR = Math.floor(r / pixelCount);
-      const avgG = Math.floor(g / pixelCount);
-      const avgB = Math.floor(b / pixelCount);
-      
-      // 设置背景色
-      const finalColor = `rgb(${avgR}, ${avgG}, ${avgB})`;
-      setDominantColor(finalColor);
-      
-      // 计算亮度以决定文字颜色 (YIQ 公式)
-      const brightness = (avgR * 299 + avgG * 587 + avgB * 114) / 1000;
-      setIsDarkTextNeeded(brightness > 128);
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        
+        canvas.width = 1;
+        canvas.height = 1;
+        // 绘制 1x1 像素来获取整张图的加权平均色，即主色
+        ctx.drawImage(img, 0, 0, 1, 1);
+        const data = ctx.getImageData(0, 0, 1, 1).data;
+        const [r, g, b] = data;
+        
+        const finalColor = `rgb(${r}, ${g}, ${b})`;
+        setDominantColor(finalColor);
+        
+        // 计算亮度 (W3C 标准)
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        setIsDarkTextNeeded(brightness > 180);
+      };
+
+      img.onerror = () => {
+        console.warn("Cover image failed to load for color extraction, using default.");
+      };
     };
-    img.src = MOCK_SONG.coverUrl;
-  }, []);
+
+    extractColor();
+  }, [MOCK_SONG.coverUrl]);
 
   const formatTime = (time: number) => {
     const mins = Math.floor(time / 60);
@@ -115,17 +110,13 @@ const App: React.FC = () => {
       className="h-[100dvh] w-full flex flex-col overflow-hidden transition-all duration-1000 relative"
       style={{ backgroundColor: dominantColor }}
     >
-      {/* 动态渐变叠加，增强电影感 */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
+      {/* 动态渐变叠加 */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
 
-      {/* 增强的装饰性背景光晕 */}
+      {/* 装饰性背景光晕 */}
       <div 
-        className="absolute top-0 right-0 w-[100vw] h-[100vw] rounded-full blur-[150px] -z-10 opacity-40 translate-x-1/4 -translate-y-1/4 transition-all duration-1000"
-        style={{ backgroundColor: dominantColor, filter: 'brightness(1.8) saturate(1.5)' }}
-      ></div>
-      <div 
-        className="absolute bottom-0 left-0 w-[80vw] h-[80vw] rounded-full blur-[120px] -z-10 opacity-20 -translate-x-1/3 translate-y-1/3 transition-all duration-1000"
-        style={{ backgroundColor: dominantColor, filter: 'brightness(1.2)' }}
+        className="absolute top-0 right-0 w-[100vw] h-[100vw] rounded-full blur-[150px] -z-10 opacity-30 translate-x-1/4 -translate-y-1/4 transition-all duration-1000"
+        style={{ backgroundColor: dominantColor, filter: 'brightness(1.5)' }}
       ></div>
 
       {/* Main Content */}
@@ -142,7 +133,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Lyrics Panel */}
-        <div className="flex-1 md:flex-1 flex flex-col justify-center overflow-hidden w-full max-w-2xl mx-auto md:mx-0 px-6 md:px-0">
+        <div className="flex-1 md:flex-1 flex flex-col justify-center overflow-hidden w-full max-w-2xl mx-auto md:mx-0 px-6 md:px-12">
           <LyricsPanel 
             lyrics={MOCK_SONG.lyrics} 
             currentTime={currentTime} 
@@ -151,13 +142,13 @@ const App: React.FC = () => {
             album={MOCK_SONG.album}
             source={MOCK_SONG.source}
             onSeek={handleSeek}
-            isDarkTheme={!isDarkTextNeeded} // 如果亮度低（暗色背景），则使用 LightTheme (浅色文字)
+            isDarkTheme={!isDarkTextNeeded}
           />
         </div>
       </main>
 
       {/* Footer Controls */}
-      <footer className="w-full bg-black/40 backdrop-blur-3xl border-t border-white/5 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-12 flex-shrink-0 z-50">
+      <footer className="w-full bg-black/30 backdrop-blur-3xl border-t border-white/5 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-12 flex-shrink-0 z-50">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-1 md:gap-4">
           
           <div className="hidden md:flex items-center space-x-4 w-64">

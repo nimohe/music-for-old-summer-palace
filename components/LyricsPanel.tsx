@@ -10,7 +10,7 @@ interface LyricsPanelProps {
   album: string;
   source: string;
   onSeek?: (time: number) => void;
-  isDarkTheme?: boolean; // 新增属性，用于适配背景
+  isDarkTheme?: boolean; 
 }
 
 const LyricsPanel: React.FC<LyricsPanelProps> = ({ 
@@ -76,9 +76,9 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
   const inactiveLyricColor = isDarkTheme ? 'text-white/40' : 'text-gray-400';
 
   return (
-    <div className="h-full flex flex-col items-center md:items-start text-center md:text-left overflow-hidden md:pt-32 lg:pt-40 transition-all duration-500">
-      {/* Header Info */}
-      <div className="mb-4 md:mb-10 flex-shrink-0 w-full px-4 md:px-0">
+    <div className="h-full flex flex-col items-center md:items-start text-center md:text-left overflow-hidden md:pt-[15vh] transition-all duration-500">
+      {/* Header Info - PC端通过 md:pt-[15vh] 恢复位置 */}
+      <div className="mb-4 md:mb-8 flex-shrink-0 w-full px-4 md:px-0">
         <div 
           ref={titleWrapperRef}
           className={`marquee-wrapper mb-2 ${shouldMarquee ? 'is-overflowing' : ''}`}
@@ -86,7 +86,7 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
             <div className={`marquee-content ${shouldMarquee ? 'marquee-active' : 'w-full text-center md:text-left'}`}>
                 <h1 
                   ref={titleContentRef}
-                  className={`text-xl md:text-3xl lg:text-4xl font-bold inline-block md:max-w-lg transition-colors ${textColor}`}
+                  className={`text-xl md:text-3xl lg:text-4xl font-bold inline-block md:max-w-md transition-colors ${textColor}`}
                   title={title}
                 >
                   {title}
@@ -105,11 +105,11 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
         </div>
       </div>
 
-      {/* Lyrics Container */}
+      {/* Lyrics Container - 调整 PC 端尺寸，使其更紧凑 */}
       <div 
         ref={containerRef}
         onScroll={handleScroll}
-        className="w-full flex-1 md:max-w-md md:h-[40dvh] overflow-y-auto overflow-x-hidden custom-scrollbar mask-fade-edges relative px-2"
+        className="w-full flex-1 md:max-w-sm md:max-h-[45dvh] overflow-y-auto overflow-x-hidden custom-scrollbar mask-fade-edges relative px-2"
       >
         <div className="py-12 md:py-16 lg:py-20 space-y-4 md:space-y-8">
             {lyrics.length > 0 ? (

@@ -13,32 +13,35 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            background-color: #000;
             height: var(--app-height);
             overflow: hidden;
-            /* 禁用移动端橡皮筋效果 */
             position: fixed;
             width: 100%;
         }
         .vinyl-grooves {
-            background: repeating-radial-gradient(
-                circle at center,
-                #111 0px,
-                #111 2px,
-                #18181b 3px
-            );
+            background: 
+                repeating-radial-gradient(
+                    circle at center,
+                    #111 0px,
+                    #111 1px,
+                    #16161a 2px,
+                    #111 3px
+                ),
+                radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
         }
         /* Custom scrollbar */
         .custom-scrollbar {
             scrollbar-width: thin;
-            scrollbar-color: #e2e8f0 transparent;
+            scrollbar-color: rgba(255,255,255,0.1) transparent;
             overflow-x: hidden !important;
         }
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
+            background: rgba(255,255,255,0.1);
             border-radius: 10px;
         }
         .mask-fade-edges {
@@ -56,7 +59,6 @@
             transition: transform 0.3s ease;
         }
 
-        /* 仅在内容溢出且激活时触发动画 */
         .marquee-active {
             animation: marquee-scroll 15s linear infinite;
             padding-right: 50px;
