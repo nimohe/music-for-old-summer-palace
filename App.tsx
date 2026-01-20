@@ -8,7 +8,8 @@ const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(0.7); // Default volume at 70%
+  const [volume, setVolume] = useState(0.7); // 默认音量 70%
+  const [showMobileVolume, setShowMobileVolume] = useState(false); // 移动端音量条显示开关
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const formatTime = (time: number) => {
@@ -17,13 +18,11 @@ const App: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Safely trigger playback
   const safePlay = async () => {
     if (audioRef.current) {
       try {
         await audioRef.current.play();
       } catch (error: any) {
-        // Ignore AbortError as it's just an interruption
         if (error.name !== 'AbortError') {
           console.error("Playback failed:", error);
         }
@@ -78,7 +77,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Ensure volume stays in sync
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
@@ -87,12 +85,12 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen w-full flex flex-col bg-white overflow-hidden text-gray-900 relative">
-      {/* Background decoration elements */}
+      {/* 背景装饰 */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gray-50 rounded-full blur-3xl -z-10 opacity-50 translate-x-1/2 -translate-y-1/2"></div>
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-50 rounded-full blur-3xl -z-10 opacity-50 -translate-x-1/2 translate-y-1/2"></div>
 
       <main className="flex-1 flex flex-col md:flex-row items-stretch w-full overflow-hidden p-4 md:p-12 md:pb-24">
-        {/* Left Section: Vinyl */}
+        {/* 左侧：胶片唱片 */}
         <div className="flex-1 flex flex-col items-center justify-center overflow-hidden">
           <div onClick={togglePlay} className="cursor-pointer transform hover:scale-[1.02] transition-transform duration-500">
             <VinylRecord 
@@ -102,7 +100,7 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Section: Lyrics */}
+        {/* 右侧：歌词面板 */}
         <div className="flex-1 relative flex flex-col overflow-hidden max-w-2xl mx-auto md:mx-0">
           <LyricsPanel 
             lyrics={MOCK_SONG.lyrics} 
@@ -116,11 +114,11 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Persistent Audio Controls at the Bottom */}
+      {/* 底部控制栏 */}
       <footer className="w-full bg-white/80 backdrop-blur-md border-t border-gray-100 p-4 md:px-12 flex-shrink-0 z-50">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-4">
           
-          {/* Track Info */}
+          {/* 歌曲信息 (仅桌面端) */}
           <div className="hidden md:flex items-center space-x-4 w-64">
              <img src={MOCK_SONG.coverUrl} alt="Cover" className="w-12 h-12 rounded shadow-sm" />
              <div className="overflow-hidden">
@@ -129,20 +127,23 @@ const App: React.FC = () => {
              </div>
           </div>
 
-          {/* Main Player Engine */}
+          {/* 播放器核心控制区 */}
           <div className="flex-1 flex flex-col items-center w-full max-w-2xl mx-auto">
-            <div className="flex items-center space-x-8 mb-2">
+            <div className="flex items-center space-x-6 md:space-x-8 mb-2">
+                {/* 循环模式 */}
                 <button className="text-gray-400 hover:text-gray-900 transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                   </svg>
                 </button>
+                {/* 上一首 */}
                 <button className="text-gray-400 hover:text-gray-900 transition-colors transform hover:scale-110">
                   <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M8.445 14.832A1 1 0 0010 14V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
                     <path d="M16.445 14.832A1 1 0 0018 14V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
                   </svg>
                 </button>
+                {/* 播放/暂停 */}
                 <button 
                   onClick={togglePlay}
                   className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
@@ -157,20 +158,26 @@ const App: React.FC = () => {
                     </svg>
                   )}
                 </button>
+                {/* 下一首 */}
                 <button className="text-gray-400 hover:text-gray-900 transition-colors transform hover:scale-110">
                   <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4z" />
                     <path d="M12.555 5.168A1 1 0 0011 6v8a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4z" />
                   </svg>
                 </button>
-                <button className="text-gray-400 hover:text-gray-900 transition-colors">
+                
+                {/* 移动端专属音量按钮 */}
+                <button 
+                  onClick={() => setShowMobileVolume(!showMobileVolume)}
+                  className={`md:hidden p-2 transition-colors rounded-full ${showMobileVolume ? 'bg-gray-100 text-gray-900' : 'text-gray-400'}`}
+                >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                   </svg>
                 </button>
             </div>
 
-            {/* Progress Bar */}
+            {/* 进度条 */}
             <div className="w-full flex items-center space-x-4 px-4">
                 <span className="text-[10px] text-gray-400 font-medium tabular-nums w-8 text-right">{formatTime(currentTime)}</span>
                 <input 
@@ -184,9 +191,27 @@ const App: React.FC = () => {
                 />
                 <span className="text-[10px] text-gray-400 font-medium tabular-nums w-8">{formatTime(duration)}</span>
             </div>
+
+            {/* 移动端展开的音量条 */}
+            {showMobileVolume && (
+              <div className="w-full px-12 pt-4 md:hidden flex items-center space-x-3 animate-in slide-in-from-top duration-300">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                </svg>
+                <input 
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={volume}
+                  onChange={handleVolumeChange}
+                  className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-900"
+                />
+              </div>
+            )}
           </div>
 
-          {/* Volume and Extra Controls */}
+          {/* 桌面端音量和额外控制 */}
           <div className="hidden md:flex items-center justify-end space-x-4 w-64">
             <button 
               onClick={() => {

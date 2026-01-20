@@ -3,7 +3,6 @@ import { Song, LyricLine } from './types';
 
 /**
  * Parses a standard LRC format string into an array of LyricLine objects.
- * Format: [mm:ss.xx] Text
  */
 const parseLRC = (lrc: string): LyricLine[] => {
   const lines = lrc.split('\n');
@@ -18,8 +17,6 @@ const parseLRC = (lrc: string): LyricLine[] => {
       const centiseconds = parseInt(match[3], 10);
       const text = match[4].trim();
       
-      // Calculate time in seconds
-      // Centiseconds are usually 1/100th of a second, but sometimes 1/1000th (milliseconds)
       const divider = match[3].length === 3 ? 1000 : 100;
       const time = minutes * 60 + seconds + centiseconds / divider;
       
@@ -30,35 +27,31 @@ const parseLRC = (lrc: string): LyricLine[] => {
   return result.sort((a, b) => a.time - b.time);
 };
 
-const rawLrc = `[00:00.00] 找爱找
-[00:05.00] 我的手心
-[00:10.00] 要留给你喔
-[00:15.00] 你总说得很少
-[00:20.00] 做得很多
-[00:25.00] 关于相信
-[00:30.00] 爱是无条件的
-[00:35.00] 我爱你
-[00:40.00] 只要你好好活着
-[00:45.00] 该怎么形容好呢
-[00:50.00] 每一个瞬间
-[00:55.00] 都值得被纪念
-[01:00.00] 心跳的声音
-[01:05.00] 在寂静中回荡
-[01:10.00] 我们的故事
-[01:15.00] 还未完待续
-[01:20.00] 握紧你的手
-[01:25.00] 直到世界尽头
-[01:30.00] 感谢有你
-[01:35.00] 出现在我的生命里
+const rawLrc = `[00:00.00] 🎵 正在播放：我爱我 (Dynamic Mock)
+[00:04.00] 这里的每一行歌词
+[00:08.00] 都是从 MOCK_SONG 数据中加载的
+[00:12.00] 胶片转动，旋律开启
+[00:16.00] 感受极简设计的魅力
+[00:20.00] 无论是在深夜还是清晨
+[00:24.00] 音乐总能治愈心灵
+[00:28.00] 歌词正在同步滚动...
+[00:32.00] 感谢使用 Zenith Music Player
+[00:36.00] 此时此刻，只有你和音乐
+[00:40.00] 享受这段纯粹的时光
+[00:44.00] 愿你的世界充满旋律
+[00:48.00] 永不落幕的乐章
+[01:00.00] 音乐是灵魂的呼吸
+[01:10.00] (间奏中...)
+[01:30.00] 回到最初的悸动
 [01:40.00] 永远不变的约定`;
 
 export const MOCK_SONG: Song = {
-  id: '1',
-  title: '我爱我',
-  artist: '李奕遐',
-  album: '我爱我',
-  coverUrl: 'https://picsum.photos/seed/music/600/600',
+  id: 'zenith-001',
+  title: '我爱我 (Studio Version)',
+  artist: '李奕遐 (Elva)',
+  album: '《我爱我》珍藏版',
+  coverUrl: 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&q=80&w=800',
   audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-  source: '我喜欢的音乐',
+  source: '来自本地歌单：我喜欢的音乐',
   lyrics: parseLRC(rawLrc)
 };
