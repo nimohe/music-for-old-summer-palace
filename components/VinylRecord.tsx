@@ -8,7 +8,7 @@ interface VinylRecordProps {
 
 const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
   return (
-    <div className="relative flex flex-col items-center justify-center pt-8 md:pt-0">
+    <div className="relative flex flex-col items-center justify-center pt-2 md:pt-0">
       {/* Tonearm - 参考图中为纯白色简约风格 */}
       <div 
         className={`absolute -top-10 md:-top-16 right-[15%] md:right-1/4 z-30 transition-transform duration-1000 ease-in-out origin-top-right`}
@@ -49,8 +49,8 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
         {/* Vinyl Surface Grooves Texture (handled via CSS class vinyl-grooves in index.html) */}
       </div>
       
-      {/* Decorative Interactive Controls */}
-      <div className="mt-12 md:mt-16 flex items-center space-x-6 md:space-x-8">
+      {/* Decorative Interactive Controls - 缩小 mt-12 为 mt-4 以适配移动端布局，防止遮挡歌词标题 */}
+      <div className="mt-4 md:mt-16 flex items-center space-x-6 md:space-x-8">
         {[
           'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z',
           'M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z',
