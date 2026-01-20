@@ -2,7 +2,7 @@ name: Build and Deploy to Build Branch
 
 on:
   push:
-    branches: [ main ] # 监听main分支的推送事件
+    branches: [ local-dev ] # 监听main分支的推送事件
     paths-ignore: # 忽略某些文件的变更，避免不必要的构建
       - 'README.md'
       - '**.md'
