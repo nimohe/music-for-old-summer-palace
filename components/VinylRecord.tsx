@@ -32,8 +32,7 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
           <div className="absolute inset-0 bg-black/10 mix-blend-overlay"></div>
         </div>
         
-        {/* Central Spindle Hole */}
-        <div className="absolute w-2.5 md:w-4 h-2.5 md:h-4 bg-white rounded-full z-20 shadow-inner border border-gray-200"></div>
+        {/* 去除了中心的白色圆圈 (Spindle Hole) */}
       </div>
       
       {/* Decorative Interactive Controls */}
@@ -44,8 +43,8 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
           'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4',
           'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
         ].map((d, i) => (
-          <button key={i} className="p-2.5 md:p-3 bg-gray-100/50 hover:bg-gray-100 rounded-full transition-colors group">
-            <svg className="w-5 h-5 md:w-6 md:h-6 text-gray-600 group-hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button key={i} className="p-2.5 md:p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors group">
+            <svg className="w-5 h-5 md:w-6 md:h-6 text-white/60 group-hover:text-red-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={d} />
             </svg>
           </button>
