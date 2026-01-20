@@ -80,8 +80,8 @@ const App: React.FC = () => {
       {/* Main Content: 移动端胶片在上，歌词在下 */}
       <main className="flex-1 flex flex-col md:flex-row items-stretch w-full overflow-hidden">
         
-        {/* Top Section: Vinyl Record - 移动端占据约 2/3 高度 */}
-        <div className="h-[60%] md:h-auto md:flex-1 flex flex-col items-center justify-center overflow-hidden p-4 md:p-12">
+        {/* Top Section: Vinyl Record - 占据约 2/3 高度并增加顶部间距 */}
+        <div className="h-[66dvh] md:h-auto md:flex-1 flex flex-col items-center justify-center overflow-hidden pt-12 pb-4 md:p-12">
           <div onClick={togglePlay} className="cursor-pointer active:scale-95 transition-transform duration-300 w-full flex justify-center">
             <VinylRecord 
               isPlaying={isPlaying} 
@@ -90,7 +90,7 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Section: Lyrics Panel - 移动端占据剩余空间，且内部居中 */}
+        {/* Bottom Section: Lyrics Panel - 占据剩余空间 */}
         <div className="flex-1 md:flex-1 flex flex-col justify-center overflow-hidden w-full max-w-2xl mx-auto md:mx-0 px-6 md:px-0">
           <LyricsPanel 
             lyrics={MOCK_SONG.lyrics} 
@@ -104,7 +104,7 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Footer Controls: 确保在移动端底部安全区之上且不被遮挡 */}
+      {/* Footer Controls */}
       <footer className="w-full bg-white/95 backdrop-blur-md border-t border-gray-100 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-12 flex-shrink-0 z-50">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-1 md:gap-4">
           
@@ -171,7 +171,7 @@ const App: React.FC = () => {
                 <span className="text-[10px] text-gray-400 font-medium tabular-nums w-8">{formatTime(duration)}</span>
             </div>
 
-            {/* Mobile Volume (Overlay style) */}
+            {/* Mobile Volume Overlay */}
             {showMobileVolume && (
               <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-48 bg-white/95 shadow-xl border border-gray-100 rounded-full px-4 py-2 flex items-center space-x-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
                 <input 

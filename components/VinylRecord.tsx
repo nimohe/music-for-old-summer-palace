@@ -8,10 +8,10 @@ interface VinylRecordProps {
 
 const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
   return (
-    <div className="relative flex flex-col items-center justify-center">
+    <div className="relative flex flex-col items-center justify-center pt-8 md:pt-0">
       {/* Tonearm - 移动端适配 */}
       <div 
-        className={`absolute top-0 right-[12%] md:right-1/4 z-20 transition-transform duration-700 ease-in-out origin-top-right`}
+        className={`absolute top-4 md:top-0 right-[12%] md:right-1/4 z-20 transition-transform duration-700 ease-in-out origin-top-right`}
         style={{ transform: isPlaying ? 'rotate(15deg)' : 'rotate(-15deg)' }}
       >
         <div className="w-0.5 md:w-1 h-20 md:h-32 bg-gray-200 relative shadow-md rounded-full">
@@ -20,7 +20,7 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
         </div>
       </div>
 
-      {/* Main Vinyl Container - 移动端 90vw */}
+      {/* Main Vinyl Container - 移动端 90vw 宽度比例 */}
       <div className={`relative w-[88vw] h-[88vw] md:w-96 md:h-96 max-w-full rounded-full bg-zinc-900 shadow-2xl flex items-center justify-center vinyl-grooves ${isPlaying ? 'animate-[spin_20s_linear_infinite]' : ''}`}>
         {/* Album Cover Circle */}
         <div className="w-1/2 h-1/2 rounded-full overflow-hidden border-4 md:border-8 border-zinc-800 shadow-inner relative z-10">
@@ -37,7 +37,7 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
       </div>
       
       {/* Decorative Interactive Controls */}
-      <div className="mt-6 md:mt-12 flex items-center space-x-5 md:space-x-8">
+      <div className="mt-8 md:mt-12 flex items-center space-x-6 md:space-x-8">
         {[
           'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z',
           'M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z',
