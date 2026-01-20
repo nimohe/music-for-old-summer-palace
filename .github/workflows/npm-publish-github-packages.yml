@@ -1,43 +1,129 @@
-name: Build and Deploy to Build Branch
+name: React CI/CD Pipeline
 
 on:
   push:
-    branches: [ local-dev ] # 监听main分支的推送事件
-    paths-ignore: # 忽略某些文件的变更，避免不必要的构建
-      - 'README.md'
-      - '**.md'
+    branches: [ main, local-dev ]  # 监听 main 和 local-dev 分支的推送
+  pull_request:
+    branches: [ main ]            # PR 到 main 分支时触发
+  workflow_dispatch:              # 允许手动触发工作流
+    inputs:
+      environment:
+        description: '部署环境'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+
+env:
+  NODE_VERSION: '20'             # 指定Node.js版本，请与项目保持一致
+  BUILD_DIR: './dist'            # 构建输出目录（Vite项目通常是dist，Create-React-App是build）
 
 jobs:
-  build-and-deploy:
+  # 代码检查和测试阶段
+  lint-and-test:
+    name: Lint & Test
     runs-on: ubuntu-latest
+    
     steps:
-      # 步骤1：拉取源码
-      - name: Checkout source code
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false # 重要！使用后续指定的token进行推送
+    - name: Checkout source code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies (clean install)
+      run: |
+        # 清理安装环境，解决跨平台依赖问题
+        rm -rf node_modules package-lock.json
+        npm install
+        
+    - name: Run ESLint
+      run: npm run lint || echo "Lint skipped (no lint script)"
+      
+    - name: Run unit tests
+      run: npm test -- --watchAll=false --coverage
+      
+    - name: Upload test coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
 
-      # 步骤2：设置Node.js环境
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24.0.2' # 指定Node.js版本，请与项目保持一致
-          cache: 'npm' # 缓存npm依赖，加速后续构建
+  # 构建和部署阶段
+  build-and-deploy:
+    name: Build & Deploy
+    needs: lint-and-test        # 依赖lint-and-test成功
+    runs-on: ubuntu-latest
+    # 仅对main和local-dev分支或手动触发时执行部署
+    if: |
+      github.ref == 'refs/heads/main' || 
+      github.ref == 'refs/heads/local-dev' || 
+      github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Cache node modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          node_modules
+          **/.cache
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Security audit
+      run: npm audit --audit-level moderate
+      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output
+        path: ${{ env.BUILD_DIR }}
+        retention-days: 7
 
-      # 步骤3：安装依赖
-      - name: Install dependencies
-        run: npm ci # 使用ci命令替代install，保证依赖版本精确
+    # 部署到不同的环境
+    - name: Deploy to Staging
+      if: github.ref == 'refs/heads/develop' || (github.event.inputs.environment == 'staging' && github.event_name == 'workflow_dispatch')
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ${{ env.BUILD_DIR }}
+        publish_branch: build-staging  # 部署到staging构建分支
+        force_orphan: true
+        keep_files: false
 
-      # 步骤4：执行构建
-      - name: Build project
-        run: npm run build # 执行package.json中定义的build脚本
-
-      # 步骤5：部署到构建分支
-      - name: Deploy to Build Branch
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub自动提供的令牌
-          publish_dir: ./dist # 构建产物的目录（React应用通常是build或dist）
-          publish_branch: build # 目标分支名称，例如 'build' 或 'gh-pages'
-          force_orphan: true # 强制清空目标分支历史，只保留最新一次提交
-          keep_files: false # 不保留目标分支的旧文件
+    - name: Deploy to Production
+      if: github.ref == 'refs/heads/main' || (github.event.inputs.environment == 'production' && github.event_name == 'workflow_dispatch')
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ${{ env.BUILD_DIR }}
+        publish_branch: build-production  # 部署到production构建分支
+        force_orphan: true
+        keep_files: false
+        
+    - name: Deployment Success Notification
+      if: success()
+      run: |
+        echo "✅ 部署成功完成!"
+        echo "分支: ${{ github.ref }}"
+        echo "触发事件: ${{ github.event_name }}"
