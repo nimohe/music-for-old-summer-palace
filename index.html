@@ -52,13 +52,35 @@
             overflow: hidden;
             white-space: nowrap;
             position: relative;
-            mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
         }
+        
         .marquee-content {
             display: inline-block;
-            padding-right: 50px;
-            animation: marquee-scroll 20s linear infinite;
         }
+
+        /* 移动端滚动动画 */
+        @media (max-width: 767px) {
+            .marquee-wrapper {
+                mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+            }
+            .marquee-content {
+                padding-right: 50px;
+                animation: marquee-scroll 15s linear infinite;
+            }
+        }
+
+        /* PC端静态显示 */
+        @media (min-width: 768px) {
+            .marquee-content {
+                animation: none;
+                display: block;
+                padding-right: 0;
+            }
+            .marquee-content h1:last-child {
+                display: none; /* 隐藏为了动画复制的第二个标题 */
+            }
+        }
+
         @keyframes marquee-scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }

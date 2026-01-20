@@ -29,7 +29,11 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
             alt="Album Cover" 
             className="w-full h-full object-cover"
           />
-          {/* Label texture */}
+          {/* Title on Label */}
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-8">
+             <span className="text-[10px] text-white/40 font-bold tracking-widest uppercase">我爱我</span>
+          </div>
+          {/* Label texture overlay */}
           <div className="absolute inset-0 bg-black/10 mix-blend-overlay"></div>
         </div>
         
@@ -37,7 +41,7 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ isPlaying, coverUrl }) => {
         <div className="absolute w-4 h-4 bg-white rounded-full z-20 shadow-inner border border-gray-200"></div>
       </div>
       
-      {/* Interactive Controls below Vinyl as seen in image */}
+      {/* Decorative Interactive Controls */}
       <div className="mt-12 flex items-center space-x-8">
         <button className="p-3 bg-gray-100/50 hover:bg-gray-100 rounded-full transition-colors group">
           <svg className="w-6 h-6 text-gray-600 group-hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">

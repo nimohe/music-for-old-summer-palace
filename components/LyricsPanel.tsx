@@ -54,12 +54,12 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
 
   return (
     <div className="h-full flex flex-col p-4 md:p-0 overflow-hidden">
-      {/* Header Info - 动态化并支持标题滚动 */}
-      <div className="mb-8 flex-shrink-0 max-w-full">
-        <div className="mb-2 marquee-wrapper">
+      {/* Header Info - 支持移动端滚动 */}
+      <div className="mb-8 flex-shrink-0">
+        <div className="marquee-wrapper mb-2">
             <div className="marquee-content">
-                <h1 className="text-3xl font-bold text-gray-900 inline-block pr-12" title={title}>{title}</h1>
-                <h1 className="text-3xl font-bold text-gray-900 inline-block pr-12" title={title}>{title}</h1>
+                <h1 className="text-3xl font-bold text-gray-900 inline-block pr-12 truncate md:max-w-xl" title={title}>{title}</h1>
+                <h1 className="text-3xl font-bold text-gray-900 inline-block pr-12 md:hidden" title={title}>{title}</h1>
             </div>
         </div>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-gray-500">
