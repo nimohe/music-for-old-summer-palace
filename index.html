@@ -3,16 +3,22 @@
 <html lang="en" class="h-full overflow-hidden">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zenith Music Player</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        :root {
+            --app-height: 100dvh;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
-            height: 100%;
+            height: var(--app-height);
             overflow: hidden;
+            /* 禁用移动端橡皮筋效果 */
+            position: fixed;
+            width: 100%;
         }
         .vinyl-grooves {
             background: repeating-radial-gradient(
@@ -22,7 +28,7 @@
                 #18181b 3px
             );
         }
-        /* Custom scrollbar for the lyrics area */
+        /* Custom scrollbar */
         .custom-scrollbar {
             scrollbar-width: thin;
             scrollbar-color: #e2e8f0 transparent;
@@ -30,35 +36,25 @@
         }
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
-            height: 0px; /* Force hide horizontal scrollbar */
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #e2e8f0;
             border-radius: 10px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
-        }
         .mask-fade-edges {
             mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
         }
 
-        /* Title Marquee effect */
         .marquee-wrapper {
             width: 100%;
             overflow: hidden;
             white-space: nowrap;
             position: relative;
         }
-        
         .marquee-content {
             display: inline-block;
         }
 
-        /* 移动端滚动动画 */
         @media (max-width: 767px) {
             .marquee-wrapper {
                 mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
@@ -69,7 +65,6 @@
             }
         }
 
-        /* PC端静态显示 */
         @media (min-width: 768px) {
             .marquee-content {
                 animation: none;
@@ -77,7 +72,7 @@
                 padding-right: 0;
             }
             .marquee-content h1:last-child {
-                display: none; /* 隐藏为了动画复制的第二个标题 */
+                display: none;
             }
         }
 
@@ -98,9 +93,8 @@
 }
 </script>
 </head>
-<body class="h-full overflow-hidden">
+<body class="overflow-hidden">
     <div id="root" class="h-full"></div>
-    <!-- Entry point for the application -->
     <script type="module" src="/index.tsx"></script>
 </body>
 </html>
