@@ -50,7 +50,8 @@ export const MOCK_SONG: Song = {
   title: '我爱我',
   artist: '李奕遐',
   album: '我爱我',
-  coverUrl: 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&q=80&w=800',
+  // 使用一张与用户提供的 dark moody city scene 相似的图片
+  coverUrl: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&q=80&w=1200',
   audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
   source: '来自本地歌单：我喜欢的音乐',
   lyrics: parseLRC(rawLrc)

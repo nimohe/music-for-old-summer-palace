@@ -10,6 +10,7 @@ interface LyricsPanelProps {
   album: string;
   source: string;
   onSeek?: (time: number) => void;
+  isDarkTheme?: boolean; // 新增属性，用于适配背景
 }
 
 const LyricsPanel: React.FC<LyricsPanelProps> = ({ 
@@ -19,7 +20,8 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
   artist, 
   album, 
   source, 
-  onSeek 
+  onSeek,
+  isDarkTheme = false
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const activeLyricRef = useRef<HTMLDivElement>(null);
@@ -35,7 +37,6 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
     return currentTime >= l.time && currentTime < nextTime;
   });
 
-  // 检测标题是否溢出，仅在移动端且溢出时开启跑马灯
   useEffect(() => {
     const checkOverflow = () => {
       if (titleWrapperRef.current && titleContentRef.current) {
@@ -70,9 +71,13 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
     }, 3000); 
   };
 
+  const textColor = isDarkTheme ? 'text-white' : 'text-gray-900';
+  const subTextColor = isDarkTheme ? 'text-gray-300' : 'text-gray-500';
+  const inactiveLyricColor = isDarkTheme ? 'text-white/40' : 'text-gray-400';
+
   return (
     <div className="h-full flex flex-col items-center md:items-start text-center md:text-left overflow-hidden md:pt-32 lg:pt-40 transition-all duration-500">
-      {/* Header Info - 增加 PC 端顶部内边距，使标题位置下移 */}
+      {/* Header Info */}
       <div className="mb-4 md:mb-10 flex-shrink-0 w-full px-4 md:px-0">
         <div 
           ref={titleWrapperRef}
@@ -81,27 +86,26 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
             <div className={`marquee-content ${shouldMarquee ? 'marquee-active' : 'w-full text-center md:text-left'}`}>
                 <h1 
                   ref={titleContentRef}
-                  className="text-xl md:text-3xl lg:text-4xl font-bold text-gray-900 inline-block md:max-w-lg" 
+                  className={`text-xl md:text-3xl lg:text-4xl font-bold inline-block md:max-w-lg transition-colors ${textColor}`}
                   title={title}
                 >
                   {title}
                 </h1>
-                {/* 仅在需要滚动时渲染第二个标题用于无缝循环 */}
                 {shouldMarquee && (
-                  <h1 className="text-xl md:text-3xl lg:text-4xl font-bold text-gray-900 inline-block">
+                  <h1 className={`text-xl md:text-3xl lg:text-4xl font-bold inline-block ${textColor}`}>
                     {title}
                   </h1>
                 )}
             </div>
         </div>
-        <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-4 md:gap-x-6 gap-y-1 text-xs md:text-sm text-gray-500">
-            <p>专辑：<span className="text-blue-500 font-medium">{album}</span></p>
-            <p>歌手：<span className="text-blue-500 font-medium">{artist}</span></p>
-            <p className="hidden md:block text-gray-400">来源：<span>{source}</span></p>
+        <div className={`flex flex-wrap justify-center md:justify-start items-center gap-x-4 md:gap-x-6 gap-y-1 text-xs md:text-sm ${subTextColor}`}>
+            <p>专辑：<span className="text-blue-400 font-medium">{album}</span></p>
+            <p>歌手：<span className="text-blue-400 font-medium">{artist}</span></p>
+            <p className="hidden md:block opacity-70">来源：<span>{source}</span></p>
         </div>
       </div>
 
-      {/* Lyrics Container - 缩小 PC 端最大宽度及显示高度，避免过于空旷 */}
+      {/* Lyrics Container */}
       <div 
         ref={containerRef}
         onScroll={handleScroll}
@@ -116,8 +120,8 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
                     onClick={() => onSeek?.(lyric.time)}
                     className={`transition-all duration-700 cursor-pointer whitespace-normal py-1 px-4 md:px-0 ${
                         index === activeIndex 
-                        ? 'text-gray-900 text-lg md:text-2xl font-bold scale-105' 
-                        : 'text-gray-400 text-base md:text-lg font-medium hover:text-gray-700'
+                        ? `${textColor} text-lg md:text-2xl font-bold scale-105` 
+                        : `${inactiveLyricColor} text-base md:text-lg font-medium hover:text-white/80`
                     }`}
                 >
                     {lyric.text}
