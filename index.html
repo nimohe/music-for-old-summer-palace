@@ -45,6 +45,24 @@
         .mask-fade-edges {
             mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
         }
+
+        /* Title Marquee effect */
+        .marquee-wrapper {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+        }
+        .marquee-content {
+            display: inline-block;
+            padding-right: 50px;
+            animation: marquee-scroll 20s linear infinite;
+        }
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
     </style>
 <script type="importmap">
 {

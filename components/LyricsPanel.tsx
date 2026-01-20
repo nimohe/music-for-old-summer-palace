@@ -54,11 +54,13 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
 
   return (
     <div className="h-full flex flex-col p-4 md:p-0 overflow-hidden">
-      {/* Header Info - 完全动态化 */}
-      <div className="mb-8 flex-shrink-0">
-        <div className="flex items-center space-x-3 mb-2">
-            <h1 className="text-3xl font-bold text-gray-900 truncate" title={title}>{title}</h1>
-            <span className="flex-shrink-0 px-2 py-0.5 bg-red-50 text-red-500 text-[10px] font-bold border border-red-100 rounded uppercase tracking-wider">Hi-Res</span>
+      {/* Header Info - 动态化并支持标题滚动 */}
+      <div className="mb-8 flex-shrink-0 max-w-full">
+        <div className="mb-2 marquee-wrapper">
+            <div className="marquee-content">
+                <h1 className="text-3xl font-bold text-gray-900 inline-block pr-12" title={title}>{title}</h1>
+                <h1 className="text-3xl font-bold text-gray-900 inline-block pr-12" title={title}>{title}</h1>
+            </div>
         </div>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-gray-500">
             <p>专辑：<span className="text-blue-500 hover:text-blue-700 hover:underline cursor-pointer transition-colors">{album}</span></p>
@@ -94,8 +96,6 @@ const LyricsPanel: React.FC<LyricsPanelProps> = ({
             )}
         </div>
       </div>
-      
-      {/* 移除了之前存在的 side tools 和底部辅助按钮，让 UI 更加专注 */}
     </div>
   );
 };
