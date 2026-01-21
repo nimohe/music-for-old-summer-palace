@@ -11,8 +11,9 @@ export interface Song {
   album: string;
   coverUrl: string;
   audioUrl: string;
+  lrcUrl: string; // 新增：歌词文件路径
   source: string;
-  lyrics: LyricLine[];
+  lyrics?: LyricLine[]; // 改为可选，因为将从外部加载
 }
 
 export interface PlayerState {
